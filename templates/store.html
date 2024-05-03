@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Retail Store Management</title>
+    <link rel="stylesheet" href="/static/st.css">
+</head>
+<body>
+    <h1>Retail Store Management</h1>
+    
+<!-- Display list of products -->
+<h2>All Products</h2>
+<ul>
+    {% for Product in Products %}
+        <li>ID: {{ Product[0] }}, Name: {{ Product[1] }}, Category: {{ Product[2] }}, Price: {{ Product[3] }}</li>
+    {% endfor %}
+</ul>
+
+<!-- Add a new product -->
+<h2>Add Product</h2>
+<form action="/add" method="post">
+    Name: <input type="text" name="name" required><br>
+    Category: <input type="text" name="category" required><br>
+    Price: <input type="number" name="price" required><br>
+    <input type="submit" value="Add Product">
+</form>
+
+<!-- Update a product -->
+<h2>Update Product</h2>
+<form action="/update" method="post">
+    ID: <input type="number" name="id" required><br>
+    Name: <input type="text" name="name"><br>
+    Category: <input type="text" name="category"><br>
+    Price: <input type="number" name="price"><br>
+    <input type="submit" value="Update Product">
+</form>
+
+<!-- Delete a product -->
+<h2>Delete Product</h2>
+<form action="/delete" method="post">
+    ID: <input type="number" name="id" required><br>
+    <input type="submit" value="Delete Product">
+</form>
+
+<!-- Search for products -->
+<h2>Search Products</h2>
+<form action="/search" method="get">
+    Query: <input type="text" name="query"><br>
+    <input type="submit" value="Search">
+</form>
+
+<div id="search-results"></div>
+
+<!-- Script to handle search results -->
+<script>
+    document.querySelector('form[action="/search"]').addEventListener('submit', function(event) {
+        event.preventDefault();
+        fetch(`/search?query=${document.querySelector('input[name="query"]').value}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('search-results');
+                resultsDiv.innerHTML = '';
+                data.forEach(product => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `ID: ${product[0]}, Name: ${product[1]}, Category: ${product[2]}, Price: ${product[3]}`;
+                    resultsDiv.appendChild(listItem);
+                });
+            });
+    });
+</script>
